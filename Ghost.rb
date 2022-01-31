@@ -1,4 +1,5 @@
 require "byebug"
+require "set"
 require_relative "Player"
 
 class Ghost
@@ -23,7 +24,39 @@ class Ghost
     attr_reader :fragment, :dictionary, :losses, :players
 
     def play_round
+        fragment = ""
+        welcome
 
+        until round_over?
+            take_turn
+            next_player!
+        end
+
+        update_standings
+    end
+
+    def take_turn
+        system("Clear")
+        puts "It's #{current_player}'s turn!"
+        guest = gets.chomp.downcase
+        letter = nil
+
+        until letter
+            letter = guest
+
+            until valid_play?(letter)
+                alert_invalid_move(letter)
+                letter = nil
+            end
+
+        end
+
+            puts "#{current_player} added the letter '#{letter}' to the fragment."
+
+    end
+
+    def alert_invalid_move(letter)
+        puts "Invalid move!!! Try again!"
     end
 
     def game_over?
@@ -60,7 +93,7 @@ class Ghost
         players.rotate! until losses[current_player] < MAX_LOSS_COUNT
     end
 
-    def last_player
+    def previous_player
         (players.count - 1).downto(0) do |idx|
             return players[idx] if losses[players] < MAX_LOSS_COUNT
         end        
@@ -68,6 +101,23 @@ class Ghost
 
     def record(player)
         "GHOST".slice(0,losses[player])
+    end
+
+    def update_standings
+        system("clear")
+        puts "#{previous_player} spelled #{fragment}"
+        puts "#{previous_player} gets a letter!"
+        sleep(1)
+
+        if losses[previous_player] == MAX_LOSS_COUNT - 1
+            puts "#{previous_player} has been eliminated!"
+            sleep(1)
+        end
+
+        losses[previous_player] += 1
+
+        display_standings
+
     end
 
     def display_standings
@@ -82,6 +132,11 @@ class Ghost
         display_standings
     end
 
+    def valid_play?(letter)
+        return false unless ALPHABET.include?(letter)
+        possible_frag = fragment + letter
+        dictionary.any? { |word| word.start_with?(possible_frag) }
+    end
 
 
 end
