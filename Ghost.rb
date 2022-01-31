@@ -3,6 +3,7 @@ require_relative "Player"
 
 class Ghost
 
+    ALPHABET = ("a".."z").to_s
     MAX_LOSS_COUNT = 5
 
     def initialize(*players)
@@ -14,8 +15,12 @@ class Ghost
 
     def run
         play_round until game_over?
-        puts "#{Winner} is the winner!"
+        puts "#{winner} is the winner!"
     end
+
+    private
+
+    attr_reader :fragment, :dictionary, :losses, :players
 
     def play_round
 
@@ -33,6 +38,51 @@ class Ghost
         (player, _) = losses.find { |_, losses| losses < MAX_LOSS_COUNT }
         player
     end
+
+    def is_word?(fragment)
+        dictionary.include?(fragment)
+    end
+
+    def round_over?
+        is_word?(fragment)
+    end
+
+    def add_letter(letter)
+        fragment << letter
+    end
+
+    def current_player
+        players.first
+    end
+
+    def next_player!
+        players.rotate!
+        players.rotate! until losses[current_player] < MAX_LOSS_COUNT
+    end
+
+    def last_player
+        (players.count - 1).downto(0) do |idx|
+            return players[idx] if losses[players] < MAX_LOSS_COUNT
+        end        
+    end
+
+    def record(player)
+        "GHOST".slice(0,losses[player])
+    end
+
+    def display_standings
+        puts "Current standings: "
+        players.each { |player| puts "#{player}: #{record(player)}"}
+        sleep(2)
+    end
+
+    def welcome
+        system("clear")
+        puts "Let's play a round a ghost!"
+        display_standings
+    end
+
+
 
 end
 
