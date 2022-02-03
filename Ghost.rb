@@ -36,8 +36,34 @@ class GhostGame
         losses.find { |player, loss| losses[player] < MAX_LOSS_COUNT }.first
     end
 
+    def current_player
+        players.first
+    end
+
     def play_round
         fragment = ""
+
+        until round_over?
+            letter = current_player.prompt
+            until valid_letter?(letter)
+
+            end
+            rotate_player!
+        end
+
+    end
+
+    def valid_letter?(letter)
+        dictionary.any? { |word| word.start_with?(letter)}
+    end
+
+    def round_over?
+        dictionary.inclue?(fragment)
+    end
+
+    def rotate_player!
+        players.rotate!
+        players.rotate! until losses[current_player] < MAX_LOSS_COUNT
     end
 
     def game_over?
