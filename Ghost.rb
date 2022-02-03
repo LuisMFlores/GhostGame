@@ -40,17 +40,26 @@ class GhostGame
         players.first
     end
 
+    def previous_player
+        (players.length - 1).downto(0) { |idx| return players[idx] if losses[players[idx]] < MAX_LOSS_COUNT }
+    end
+
     def play_round
         fragment = ""
 
         until round_over?
             letter = current_player.prompt
             until valid_letter?(letter)
-
+            invalid_letter_prompt(letter)
+            letter = current_player.prompt
             end
             rotate_player!
         end
 
+    end
+
+    def invalid_letter_prompt(letter)
+        puts "#{current_player} letter #{letter} is invalid! Please try again!"
     end
 
     def valid_letter?(letter)
