@@ -4,7 +4,7 @@ require_relative "Player"
 
 class GhostGame
 
-    
+    MAX_LOSS_COUNT = 5
 
     def initialize(*players)
         @players = players
@@ -23,7 +23,7 @@ class GhostGame
     attr_reader :players, :dictionary, :fragment, :losses
 
     def winner
-
+        losses.find { |player, loss| losses[player] < MAX_LOSS_COUNT }.first
     end
 
     def play_round
