@@ -14,6 +14,7 @@ class GhostGame
     end
 
     def run
+        welcome
         play_round until game_over?
         puts "#{winner} is the winner!"
     end
@@ -22,12 +23,21 @@ class GhostGame
 
     attr_reader :players, :dictionary, :fragment, :losses
 
+    def welcome
+        system("clear")
+        puts "---Welcome to Ghost Game---"
+        players.each do |player|
+            sleep(0.1)
+            puts player
+        end
+    end
+
     def winner
         losses.find { |player, loss| losses[player] < MAX_LOSS_COUNT }.first
     end
 
     def play_round
-
+        fragment = ""
     end
 
     def game_over?
