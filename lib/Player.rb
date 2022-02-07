@@ -6,4 +6,9 @@ class Player
         @name = name
     end
 
+    def prompt
+        print "#{name} Enter letter: "
+        gets.chomp
+    end
+
 end 
